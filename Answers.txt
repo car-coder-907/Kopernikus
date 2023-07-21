@@ -1,0 +1,43 @@
+The dataset contains images in the PNG format and consists of images from multiple cameras. The images have different resolutions, with three main sizes: 640x480, 2688x1520, and 1920x1080. The naming convention of the images includes the camera ID and timestamp. 
+The dataset appears to be used for finding free spaces in a parking lot for the AVP (Automated Valet Parking) system. The presence of four cameras viewing from different directions indicates that the system aims to monitor the parking lot from multiple viewpoints.
+The dataset likely includes images of parking spaces, vehicles, and possibly other objects relevant to the parking lot monitoring system. The goal could be to identify and recognize objects in the parking lot, particularly free spaces where vehicles can park. 
+The presence of different camera viewpoints and resolutions suggests that the dataset is designed to capture variations in lighting conditions, object sizes, and perspectives to create a comprehensive and robust dataset for the AVP system.
+
+The provided Python code is an implementation of a program that detects and removes similar images in a given dataset folder. Here's how the program works:
+
+1. The `find_and_remove_similar_images` function is the main part of the program that performs the comparison and removal of similar images.
+2. It takes the `input_folder` as its argument, which is the path to the folder containing the dataset of images.
+3. The program begins by reading all the image files with the extension ".png" present in the `input_folder` and stores their filenames in the `image_files` list.
+4. It then iterates over the images in the `image_files` list using a nested loop. The outer loop (`i`) selects the first image, and the inner loop (`j`) selects the second image to compare it with the first image.
+5. Before performing any comparison, it  preprocesses the images (`img_i` and `img_j`) using the  `preprocess_image_change_detection` function. Invalid or corrupted images are skipped and removed from the dataset using `is_valid_image` function.
+6. The program checks if the first three letters of the image file names (the camera ID) match. If not, it skips the comparison between those images.
+7. If the camera IDs match, function `are_images_similar_size` checks if the images are of similar size within the specified `max_size_difference`.
+8. If the images are of similar size, it compares the frames using the `compare_frames_change_detection` function, which calculates the absolute difference between the two frames, creates a thresholded image, finds contours, and calculates scores based on the contour areas and difference in pixel intensity.
+9. If the score is less than `min_score_threshold` and the count of changed pixels (difference in intensity) is less than `min_count_threshold`, the images are considered similar. The second image is then added to a list of images that need to be removed (`images_to_remove`).
+10. After all the images have been compared, the program iterates over the `images_to_remove` list and removes the similar images from the dataset folder using `os.remove`.
+
+Overall, the program detects and removes similar images in the dataset folder based on their camera IDs, combined contours area and image intensities while considering the specified thresholds.
+
+Thresholds:
+
+1. `min_contour_area_threshold`: A threshold of 3000 is selected to include small objects like bags and other relevant features while excluding smaller contours that might be generated due to artifacts or the floor.
+2. `min_score_threshold`: The value of 100000 is used as a reference to identify images with significant differences between them. If the sum of areas of the remaining contours after comparison is greater than this threshold, then the images are considered to have substantial dissimilarities due to varying objects.
+3. `min_count_threshold`: The threshold of 25000 is chosen to retain images with slight changes in pixel intensities caused by different lighting conditions. Images with a count of changed pixels below this threshold are retained as they likely represent minor variations in brightness or lighting.
+4. `max_size_difference`: The value of 0 is set to ensure that only images of identical sizes are compared for similarity.
+
+Collecting data with unique scenes involves strategic planning and diversification of data sources to capture a wide range of scenarios. Here are some steps and strategies to achieve this:
+
+Identify Key Scenarios: Define the specific scenarios or use cases that are important for your application. For example, in the case of parking lot occupancy detection, you might want to capture images with different lighting conditions, weather conditions, parking lot sizes, and occupancy levels.
+Diverse Data Sources: Gather data from various sources, locations, and environments. This could include different parking lots, urban and suburban areas, indoor and outdoor spaces, day and night conditions, and different geographical regions.
+Camera Placements: Install cameras at different angles and heights to capture varied perspectives. Consider placing cameras at multiple vantage points, such as ground-level, elevated positions, and corners, to cover the entire scene effectively.
+Time Variability: Collect data at different times of the day and different days of the week. This will help capture variations in traffic and occupancy patterns over time.
+Weather Conditions: Capture data under various weather conditions, including sunny, cloudy, rainy, and foggy weather. Different weather conditions can have a significant impact on the scene appearance.
+Traffic Variability: Ensure that the dataset includes scenes with different traffic volumes and occupancy levels. This will help the model generalize better to different parking lot scenarios.
+Data Augmentation: Use data augmentation techniques to generate additional variations of existing data. Techniques like flipping, rotation, scaling, and adding noise can create new samples with minimal effort.
+
+Apart from the contour-based change detection approach used in the provided code, there are other techniques to identify and remove images with similar features more accurately, but with some additional compute complexity. Some of these techniques are:
+
+Histogram Comparison: Comparing the histograms of two images to assess their similarity. Images with similar content are likely to have similar histograms. Techniques like Histogram Intersection, Bhattacharyya distance, or Histogram Correlation can be used for this purpose.
+Feature Extraction and Matching: Extract key features from images using techniques like SIFT (Scale-Invariant Feature Transform). Then, match the features between two images and calculate a similarity score based on the number of matches.
+SSIM (Structural Similarity Index): SSIM metric that quantifies the similarity between two images can be used..
+Deep Learning-based Techniques: Using pre-trained deep learning models like Siamese Networks or Triplet Networks to learn image embeddings that can capture image similarity. By measuring the distance between embeddings, images with similar features can be identified.
