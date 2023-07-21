@@ -208,7 +208,7 @@ def find_and_remove_similar_images(input_folder):
                     images_to_remove.append(image_files[j])
 
     # Remove images that need to be removed from the original image_files list
-    image_files = [file for file in image_files if file not in images_to_remove]
+    #image_files = [file for file in image_files if file not in images_to_remove]
 
     # Perform the removal of similar images from the dataset folder
     for image_to_remove in images_to_remove:
