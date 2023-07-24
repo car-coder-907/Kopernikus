@@ -75,76 +75,6 @@ def is_valid_image(img):
     # Check if the image is valid (not empty and has proper shape)
     return img is not None and img.shape[0] > 0 and img.shape[1] > 0
 
-
-# def find_and_remove_similar_images(input_folder):
-#     min_contour_area_threshold = 3000 
-#     min_score_threshold = 100000
-#     min_count_threshold = 25000
-#     max_size_difference = 0  
-
-#     image_files = [file for file in os.listdir(input_folder) if file.endswith('.png')]
-#     print(image_files)
-#     num_images = len(image_files)
-
-
-#     for i in range(num_images):
-#         img_path_i = os.path.join(input_folder, image_files[i])
-#         img_i = cv2.imread(img_path_i)
-        
-#         if not is_valid_image(img_i):
-#             print(f"Warning: Image {img_path_i} is invalid or corrupted. Skipping.")
-#             os.remove(img_path_i)
-#             continue
-        
-#         img_i = preprocess_image_change_detection(img_i)
-
-#         for j in range(i + 1, num_images):
-#             img_path_j = os.path.join(input_folder, image_files[j])
-#             img_prefix_i = image_files[i][:3]
-#             img_prefix_j = image_files[j][:3]
-            
-#             # Check if the first 3 letters of the image file names match
-#             if img_prefix_i != img_prefix_j:
-#                 print('Images are from two differnt Camera IDs. Skipping')
-#                 continue
-            
-#             img_j = cv2.imread(img_path_j)
-#             print(f"Comparing Image:{image_files[i]} with Image:{image_files[j]}")
-
-#             if not is_valid_image(img_j):
-#                 print(f"Warning: Image {img_path_j} is invalid or corrupted. Skipping.")
-#                 os.remove(img_path_j)
-#                 continue
-
-#             img_j = preprocess_image_change_detection(img_j)
-        
-#             if are_images_similar_size(img_i, img_j, max_size_difference):
-                
-#                 score, _, thresh = compare_frames_change_detection(img_i, img_j, min_contour_area_threshold)
-                
-#                 count = 0
-#                 height, width = thresh.shape
-#                 for y in range(height):
-#                     for x in range(width):
-#                         # Check pixel value at (x, y)
-#                         pixel_value = thresh[y, x]
-                
-#                         # Check if the pixel has changed (difference in intensity)
-#                         if pixel_value == 255:
-#                             #print(f"Change detected at pixel ({x}, {y})")
-#                             count = count + 1
-#                 print('Count: ', count)
-        
-#                 if score < min_score_threshold and count < min_count_threshold :
-#                     # Images are similar, remove image_files[j] from the input folder and the image_files list
-#                     print(f"Images {image_files[i]} and {image_files[j]} are similar. Removing {image_files[j]}.")
-#                     os.remove(img_path_j)
-                   
-# if __name__ == "__main__":
-#     input_dataset_folder = r"C:\Users\sb\Downloads\dataset-candidates-ml_final\dataset"
-#     find_and_remove_similar_images(input_dataset_folder)
-
-
 def find_and_remove_similar_images(input_folder):
     min_contour_area_threshold = 3000
     min_score_threshold = 100000
@@ -211,6 +141,7 @@ def find_and_remove_similar_images(input_folder):
     #image_files = [file for file in image_files if file not in images_to_remove]
 
     # Perform the removal of similar images from the dataset folder
+    images_to_remove = list(dict.fromkeys(images_to_remove)) #removing duplicates from the removal list
     for image_to_remove in images_to_remove:
         img_path_to_remove = os.path.join(input_folder, image_to_remove)
         print(f"Removing similar image: {img_path_to_remove}")
